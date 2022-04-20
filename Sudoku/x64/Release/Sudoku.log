@@ -1,0 +1,3 @@
+﻿  main.cpp
+  SudokuGame.cpp
+c:\program files (x86)\windows kits\10\include\10.0.19041.0\um\winnt.h(173): fatal error C1189: #error:  "No Target Architecture"
