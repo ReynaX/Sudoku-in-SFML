@@ -1,3 +1,13 @@
-﻿  main.cpp
-  SudokuGame.cpp
-c:\program files (x86)\windows kits\10\include\10.0.19041.0\um\winnt.h(173): fatal error C1189: #error:  "No Target Architecture"
+﻿  Line.cpp
+c:\users\przemek\desktop\studia\sudokusolver\sudoku\sudoku\line.cpp(4): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  SudokuGenerator.cpp
+  SudokuSquare.cpp
+  main.cpp
+  SudokuWindow.cpp
+c:\users\przemek\desktop\studia\sudokusolver\sudoku\sudoku\sudokuwindow.cpp(22): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\przemek\desktop\studia\sudokusolver\sudoku\sudoku\sudokuwindow.cpp(31): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+sfml-graphics-s.lib(RenderStates.cpp.obj) : fatal error LNK1112: module machine type 'x86' conflicts with target machine type 'x64'

@@ -1,6 +1,16 @@
-﻿sfml-window-s.lib(JoystickImpl.cpp.obj) : error LNK2001: unresolved external symbol __imp__joyGetPosEx@8
-sfml-window-s.lib(JoystickImpl.cpp.obj) : error LNK2001: unresolved external symbol __imp__joyGetDevCapsW@12
-sfml-system-s.lib(SleepImpl.cpp.obj) : error LNK2001: unresolved external symbol __imp__timeGetDevCaps@8
-sfml-system-s.lib(SleepImpl.cpp.obj) : error LNK2001: unresolved external symbol __imp__timeBeginPeriod@4
-sfml-system-s.lib(SleepImpl.cpp.obj) : error LNK2001: unresolved external symbol __imp__timeEndPeriod@4
-C:\Users\Przemek\Desktop\Studia\SudokuSolver\Sudoku\Release\Sudoku.exe : fatal error LNK1120: 5 unresolved externals
+﻿  Line.cpp
+c:\users\przemek\desktop\studia\sudokusolver\sudoku\sudoku\line.cpp(4): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  SudokuGenerator.cpp
+  SudokuSquare.cpp
+  main.cpp
+  SudokuWindow.cpp
+c:\users\przemek\desktop\studia\sudokusolver\sudoku\sudoku\sudokuwindow.cpp(22): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
+c:\users\przemek\desktop\studia\sudokusolver\sudoku\sudoku\sudokuwindow.cpp(31): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  Generating code
+  All 489 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Sudoku.vcxproj -> C:\Users\Przemek\Desktop\Studia\SudokuSolver\Sudoku\Release\Sudoku.exe
