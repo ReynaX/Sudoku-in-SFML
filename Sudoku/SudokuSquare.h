@@ -5,16 +5,20 @@ class SudokuSquare : public sf::RectangleShape
 {
 public:
 	enum SquareState {IDLE, HOVERED, CLICKED, INCORRECT};
-	SudokuSquare(int rowOnBoard, int colOnBoard, float x, float y, float width, float height, const sf::Font &font, const std::string &text);
+	SudokuSquare(int rowOnBoard, int colOnBoard, float x, float y, float width, float height, const sf::Font& font, const std::string& text);
 
-	void draw(sf::RenderTarget *target, sf::RenderStates states);
+	void draw(sf::RenderTarget *target, sf::RenderStates states = sf::RenderStates::Default) const;
 
 	void setValue(int value);
 	int getValue();
+	
 	void setValueConstant(bool valueConstant);
-	void update(SquareState newState);
+	bool getValueConstant();
+	
 	int getRow() { return m_row;  }
 	int getCol() { return m_col; }
+	
+	void update(SquareState newState);
 private:
 	int m_row, m_col;
 	sf::Text m_text;

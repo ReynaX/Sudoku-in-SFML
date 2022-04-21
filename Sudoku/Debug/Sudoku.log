@@ -1,8 +1,2 @@
-﻿  SudokuWindow.cpp
-c:\users\przemek\desktop\studia\sudokusolver\sudoku\sudoku\sudokuwindow.cpp(21): warning C4244: '=': conversion from 'double' to 'unsigned int', possible loss of data
-c:\users\przemek\desktop\studia\sudokusolver\sudoku\sudoku\sudokuwindow.cpp(30): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-          with
-          [
-              T=float
-          ]
+﻿  SudokuGenerator.cpp
   Sudoku.vcxproj -> C:\Users\Przemek\Desktop\Studia\SudokuSolver\Sudoku\Debug\Sudoku.exe

@@ -6,6 +6,7 @@
 SudokuWindow::SudokuWindow(){
 	this->m_sudokuSquares.resize(81);
 	this->m_clickedSquare = nullptr;
+	this->m_gameFinished = false;
 	createButtons();
 	eventHandler();
 }
@@ -59,13 +60,18 @@ void SudokuWindow::onMouseButtonClicked(const sf::Vector2f& mousePosition) {
 }
 
 void SudokuWindow::onKeyButtonClicked(sf::Event::TextEvent text){
+	if (m_gameFinished)
+		return;
 	if (this->m_clickedSquare == nullptr)
 		return;
 
 	int unicodeValue = text.unicode;
 	if (unicodeValue < 49 || unicodeValue > 58)
 		return;
-	this->m_clickedSquare->setValue(unicodeValue - '0');
+	if (!this->m_clickedSquare->getValueConstant()) {
+		this->m_clickedSquare->setValue(unicodeValue - '0');
+		this->m_generator.setValueAt(this->m_clickedSquare->getRow(), this->m_clickedSquare->getCol(), unicodeValue - '0');
+	}
 	update(m_clickedSquare->getRow(), m_clickedSquare->getCol(), m_clickedSquare->getValue());
 }
 
@@ -91,6 +97,11 @@ void SudokuWindow::update(int rowClicked, int colClicked, int valueClicked) {
 			this->m_sudokuSquares[i]->update(SudokuSquare::HOVERED);
 		else this->m_sudokuSquares[i]->update(SudokuSquare::IDLE);
 	}
+	if(m_generator.isGameFinished()){
+		m_gameFinished = true;
+		std::cout << "Game finished\n";
+	}
+	
 }
 
 void SudokuWindow::createButtons(){

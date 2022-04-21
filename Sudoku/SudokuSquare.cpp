@@ -32,13 +32,12 @@ SudokuSquare::SudokuSquare(int rowOnBoard, int colOnBoard, float x, float y, flo
 	this->m_state = IDLE;
 }
 
-void SudokuSquare::draw(sf::RenderTarget *target, sf::RenderStates states) {
+void SudokuSquare::draw(sf::RenderTarget *target, sf::RenderStates states) const{
 	target->draw(*this);
 	target->draw(this->m_text);
 }
 
 void SudokuSquare::setValue(int value){
-	if (m_isValueConstant) return;
 	this->m_value = value;
 	this->m_text.setString(std::to_string(value));
 }
@@ -49,6 +48,10 @@ int SudokuSquare::getValue(){
 
 void SudokuSquare::setValueConstant(bool valueConstant){
 	m_isValueConstant = valueConstant;
+}
+
+bool SudokuSquare::getValueConstant(){
+	return m_isValueConstant;
 }
 
 void SudokuSquare::update(SquareState newState){
