@@ -8,10 +8,10 @@ public:
 	bool isGameFinished();
 	void setValueAt(int row, int col, int value);
 private:
-	bool removeNumbersFromBoard();
+	bool removeNumbersFromBoard(const std::vector<int> &removeOrder, int index);
 	int solveSudoku(int row, int col, int solutions);
 	bool isSafe(int value, int row, int col);
-	std::vector<int> generateRandomPermutation();
+	std::vector<int> generateRandomPermutation(int vectorSize);
 
 	std::vector<std::vector<int>> m_board;
 	std::vector<std::vector<int>> m_solvedBoard;

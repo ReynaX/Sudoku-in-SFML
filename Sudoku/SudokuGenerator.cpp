@@ -9,7 +9,8 @@ SudokuGenerator::SudokuGenerator(){
 	solveSudoku(0, 0, 0);
 	m_solvedBoard = m_board;
 	m_missingValues = 0;
-	removeNumbersFromBoard();
+	auto vec = generateRandomPermutation(81);
+	removeNumbersFromBoard(vec, 0);
 
 		
 	std::cout << "Missing values: " << m_missingValues << '\n';
@@ -31,28 +32,24 @@ void SudokuGenerator::setValueAt(int row, int col, int value){
 	m_board[row][col] = value;
 }
 
-bool SudokuGenerator::removeNumbersFromBoard(){
-	if(m_missingValues >= 1) 
+bool SudokuGenerator::removeNumbersFromBoard(const std::vector<int> &removeOrder, int index){
+	if(m_missingValues >= 52) 
 		return true;
-
-	int row, col;
-	do{
-		row = m_dist(m_mt);
-		col = m_dist(m_mt);
-	} while (m_board[row][col] == 0);
-	
-	int valueSaved = m_board[row][col];
-	m_board[row][col] = 0;
-	auto copyBoard = m_board;
-	if(solveSudoku(0, 0, 0) != 1){
+	for(int i = index; i < removeOrder.size(); ++i){
+		int row = (removeOrder[i] - 1) / 9, col = (removeOrder[i] - 1) % 9;
+		int valueSaved = m_board[row][col]; 
+		if (valueSaved == 0)
+			continue;
+		m_board[row][col] = 0;
+		auto copyBoard = m_board;
+		if(solveSudoku(0, 0, 0) == 1){
+			++m_missingValues;
+			return removeNumbersFromBoard(removeOrder, index + 1);
+		}
 		m_board = copyBoard;
 		m_board[row][col] = valueSaved;
-		if (!removeNumbersFromBoard())
-			return false;
-		return removeNumbersFromBoard();
 	}
-	++m_missingValues;
-	return removeNumbersFromBoard();
+	return false;
 }
 
 int SudokuGenerator::solveSudoku(int row, int col, int solutions){
@@ -67,9 +64,8 @@ int SudokuGenerator::solveSudoku(int row, int col, int solutions){
 
 	if(m_board[row][col] != 0) return solveSudoku(row, col + 1, solutions);
 
-	std::vector<int> possibleValues = generateRandomPermutation();
+	std::vector<int> possibleValues = generateRandomPermutation(9);
 	for(auto& value: possibleValues){
-
 		if(isSafe(value, row, col)){
 			m_board[row][col] = value;
 			solutions = solveSudoku(row, col + 1, solutions);
@@ -98,8 +94,8 @@ bool SudokuGenerator::isSafe(int value, int row, int col){
 	return true;
 }
 
-std::vector<int> SudokuGenerator::generateRandomPermutation(){
-	std::vector<int> values(9);
+std::vector<int> SudokuGenerator::generateRandomPermutation(int vectorSize){
+	std::vector<int> values(vectorSize);
 	int n = 0;
 	std::generate(values.begin(), values.end(), [&n](){ return ++n; });
 	std::shuffle(values.begin(), values.end(), m_rd);
