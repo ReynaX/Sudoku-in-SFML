@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Line.cpp" />
+    <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="SudokuGenerator.cpp" />
     <ClCompile Include="SudokuSquare.cpp" />
     <ClCompile Include="main.cpp" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Line.h" />
+    <ClInclude Include="MenuButton.h" />
     <ClInclude Include="SudokuGenerator.h" />
     <ClInclude Include="SudokuSquare.h" />
     <ClInclude Include="SudokuWindow.h" />

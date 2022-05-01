@@ -1,8 +1,6 @@
 #include "SudokuGenerator.h"
 #include <algorithm>
 #include <iostream>
-#include <random>
-#include <chrono>
 
 SudokuGenerator::SudokuGenerator(){
 	m_board.resize(9, std::vector<int>(9));
@@ -12,7 +10,7 @@ SudokuGenerator::SudokuGenerator(){
 	auto vec = generateRandomPermutation(81);
 	removeNumbersFromBoard(vec, 0);
 
-		
+
 	std::cout << "Missing values: " << m_missingValues << '\n';
 	for(int i = 0; i < 9; ++i){
 		for(int j = 0; j < 9; ++j) std::cout << m_solvedBoard[i][j] << ' ';
@@ -32,14 +30,23 @@ void SudokuGenerator::setValueAt(int row, int col, int value){
 	m_board[row][col] = value;
 }
 
-bool SudokuGenerator::removeNumbersFromBoard(const std::vector<int> &removeOrder, int index){
-	if(m_missingValues >= 52) 
-		return true;
+void SudokuGenerator::solve(){
+	m_board = m_solvedBoard;
+}
+
+void SudokuGenerator::solveAt(int row, int col){
+	if (row <= 0 || row >= 9 || col <= 0 || col >= 9)
+		return;
+	int valueAt = m_solvedBoard[row][col];
+	m_board[row][col] = valueAt;
+}
+
+bool SudokuGenerator::removeNumbersFromBoard(const std::vector<int>& removeOrder, int index){
+	if(m_missingValues >= 50) return true;
 	for(int i = index; i < removeOrder.size(); ++i){
 		int row = (removeOrder[i] - 1) / 9, col = (removeOrder[i] - 1) % 9;
-		int valueSaved = m_board[row][col]; 
-		if (valueSaved == 0)
-			continue;
+		int valueSaved = m_board[row][col];
+		if(valueSaved == 0) continue;
 		m_board[row][col] = 0;
 		auto copyBoard = m_board;
 		if(solveSudoku(0, 0, 0) == 1){

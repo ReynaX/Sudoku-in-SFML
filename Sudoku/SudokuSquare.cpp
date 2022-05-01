@@ -1,45 +1,47 @@
 #include "SudokuSquare.h"
 
 SudokuSquare::SudokuSquare(int rowOnBoard, int colOnBoard, float x, float y, float width, float height, const sf::Font &font, const std::string &text){
-	this->m_row = rowOnBoard;
-	this->m_col = colOnBoard;
+	m_row = rowOnBoard;
+	m_col = colOnBoard;
 	
-	this->setSize(sf::Vector2f(width, height));
-	this->setPosition(sf::Vector2f(x, y));
-	this->setOutlineThickness(1);
-	this->setOutlineColor(sf::Color::Black);
+	setSize(sf::Vector2f(width, height));
+	setPosition(sf::Vector2f(x, y));
+	setOutlineThickness(1);
+	setOutlineColor(sf::Color::Black);
 
-	this->m_font = font;
-	this->m_text.setFont(m_font);
-	this->m_text.setString(text);
-	this->m_text.setFillColor(sf::Color::Black);
-	this->m_text.setCharacterSize(24);
+	m_font = font;
+	m_text.setFont(m_font);
+	m_text.setString(text);
+	m_text.setFillColor(sf::Color::Black);
+	m_text.setCharacterSize(24);
 	
-	this->m_text.setPosition(
-		this->getPosition().x + this->getGlobalBounds().width / 3.f  - m_text.getGlobalBounds().width / 2.f,
-		this->getPosition().y + this->getGlobalBounds().height / 3.f - m_text.getGlobalBounds().height / 2.f
+	m_text.setPosition(
+		getPosition().x + getGlobalBounds().width / 3.f  - m_text.getGlobalBounds().width / 2.f,
+		getPosition().y + getGlobalBounds().height / 3.f - m_text.getGlobalBounds().height / 2.f
 	);
 	
-	this->m_idleColor = sf::Color::White;
-	this->m_hoverColor = sf::Color(224, 255, 255);
-	this->m_clickedColor = sf::Color(135, 206, 235);
-	this->m_incorrectColor = sf::Color(220,20,6);
-	this->m_activeColor = m_idleColor;
-	this->setFillColor(m_activeColor);
+	m_idleColor = sf::Color::White;
+	m_hoverColor = sf::Color(224, 255, 255);
+	m_clickedColor = sf::Color(135, 206, 235);
+	m_incorrectColor = sf::Color(220,20,6);
+	m_activeColor = m_idleColor;
+	setFillColor(m_activeColor);
 	
-	this->m_value = 0;
-	this->m_isValueConstant = false;
-	this->m_state = IDLE;
+	m_value = 0;
+	m_isValueConstant = false;
+	m_state = IDLE;
 }
 
 void SudokuSquare::draw(sf::RenderTarget *target, sf::RenderStates states) const{
 	target->draw(*this);
-	target->draw(this->m_text);
+	target->draw(m_text);
 }
 
 void SudokuSquare::setValue(int value){
-	this->m_value = value;
-	this->m_text.setString(std::to_string(value));
+	m_value = value;
+	if(value != 0)
+		m_text.setString(std::to_string(value));
+	else m_text.setString("");
 }
 
 int SudokuSquare::getValue(){
@@ -57,15 +59,15 @@ bool SudokuSquare::getValueConstant(){
 void SudokuSquare::update(SquareState newState){
 	switch(newState){
 	case IDLE:
-		this->m_activeColor = m_idleColor; break;
+		m_activeColor = m_idleColor; break;
 	case HOVERED:
-		this->m_activeColor = m_hoverColor; break;
+		m_activeColor = m_hoverColor; break;
 	case CLICKED:
-		this->m_activeColor = m_clickedColor; break;
+		m_activeColor = m_clickedColor; break;
 	case INCORRECT:
-		this->m_activeColor = m_incorrectColor; break;
+		m_activeColor = m_incorrectColor; break;
 	}
-	this->m_state = newState;
-	this->setFillColor(m_activeColor);
+	m_state = newState;
+	setFillColor(m_activeColor);
 }
 

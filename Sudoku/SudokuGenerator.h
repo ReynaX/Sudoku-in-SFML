@@ -6,9 +6,12 @@ public:
 	SudokuGenerator();
 	std::vector<std::vector<int>> getBoard();
 	bool isGameFinished();
+	
 	void setValueAt(int row, int col, int value);
+	void solve();
+	void solveAt(int row, int col);
 private:
-	bool removeNumbersFromBoard(const std::vector<int> &removeOrder, int index);
+	bool removeNumbersFromBoard(const std::vector<int>& removeOrder, int index);
 	int solveSudoku(int row, int col, int solutions);
 	bool isSafe(int value, int row, int col);
 	std::vector<int> generateRandomPermutation(int vectorSize);
