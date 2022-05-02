@@ -13,6 +13,9 @@ private:
 	void onMouseMoved(const sf::Vector2f& mousePosition);
 	void onKeyButtonClicked(sf::Event::TextEvent text);
 	void onBackspaceButtonClicked();
+	void onNewGameButtonClicked();
+	void onSolveButtonClicked();
+	void onHintButtonClicked();
 	
 	void update(int rowClicked, int colClicked, int valueClicked);
 	

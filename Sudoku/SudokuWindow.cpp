@@ -14,14 +14,14 @@ SudokuWindow::SudokuWindow(){
 
 void SudokuWindow::eventHandler(){
 	Line vertices[] = {
-	Line(sf::Vector2f(150, 0), sf::Vector2f(150, 500)),
-	Line(sf::Vector2f(300, 0), sf::Vector2f(300, 500)),
-	Line(sf::Vector2f(0, 150), sf::Vector2f(500, 150)),
-	Line(sf::Vector2f(0, 300), sf::Vector2f(500, 300))
+	Line(sf::Vector2f(150, 0), sf::Vector2f(150, 450)),
+	Line(sf::Vector2f(300, 0), sf::Vector2f(300, 450)),
+	Line(sf::Vector2f(0, 150), sf::Vector2f(450, 150)),
+	Line(sf::Vector2f(0, 300), sf::Vector2f(450, 300))
 	};
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8.0;
-	sf::RenderWindow window(sf::VideoMode(625, 480), "Sudoku v1.0", sf::Style::Close, settings);
+	sf::RenderWindow window(sf::VideoMode(625, 450), "Sudoku v1.0", sf::Style::Close, settings);
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -45,7 +45,7 @@ void SudokuWindow::eventHandler(){
 			if (event.type == sf::Event::TextEntered)
 				onKeyButtonClicked(event.text);
 		}
-		window.clear();
+		window.clear(sf::Color(255, 255, 255, 1));
 		for (int i = 0; i < 81; ++i) {
 			m_sudokuSquares[i]->draw(&window, sf::RenderStates::Default);
 		}
@@ -77,41 +77,22 @@ void SudokuWindow::onMouseButtonClicked(const sf::Vector2f& mousePosition) {
 	for(auto& button: m_menuButtons){
 		if(button->getGlobalBounds().contains(mousePosition)){
 			switch(button->getFunction()){
-			case MenuButton::NEW_GAME: {
-				m_generator = new SudokuGenerator();
-				// Reassign values of sudoku squares
-				auto board = m_generator->getBoard();
-				for (int i = 0; i < 81; ++i) {
-					int value = board[i / 9][i % 9];
-					m_sudokuSquares[i]->setValue(value);
-					m_sudokuSquares[i]->setValueConstant(value != 0);
+				case MenuButton::NEW_GAME: {
+					onNewGameButtonClicked();
+					break;
 				}
-				break;
-			}
-			case MenuButton::SOLVE_GAME:{
-				m_generator->solve();
-				auto board = m_generator->getBoard();
-				for (int i = 0; i < 81; ++i) {
-					int value = board[i / 9][i % 9];
-					m_sudokuSquares[i]->setValue(value);
-					m_sudokuSquares[i]->setValueConstant(value != 0);
+				case MenuButton::SOLVE_GAME:{
+					onSolveButtonClicked();
+					break;
 				}
-				break;
-			}
-			case MenuButton::HINT:{
-				if (m_clickedSquare != nullptr) {
-					m_generator->solveAt(m_clickedSquare->getRow(), m_clickedSquare->getCol());
-					int valueAt = m_generator->getBoard()[m_clickedSquare->getRow()][m_clickedSquare->getCol()];
-					m_sudokuSquares[m_clickedSquare->getRow()][m_clickedSquare->getCol()].setValue(valueAt);
-					update(m_clickedSquare->getRow(), m_clickedSquare->getCol(), valueAt);
+				case MenuButton::HINT:{
+					onHintButtonClicked();
+					break;
 				}
-				break;
-			}
 			}
 			break;
 		}
 	}
-	//update(0, 0, )
 }
 
 void SudokuWindow::onMouseMoved(const sf::Vector2f& mousePosition){
@@ -149,6 +130,43 @@ void SudokuWindow::onBackspaceButtonClicked(){
 	}
 }
 
+void SudokuWindow::onNewGameButtonClicked(){
+	m_generator = new SudokuGenerator();
+	// Reassign values of sudoku squares
+	auto board = m_generator->getBoard();
+	for (int i = 0; i < 81; ++i) {
+		int value = board[i / 9][i % 9];
+		m_sudokuSquares[i]->setValue(value);
+		m_sudokuSquares[i]->setValueConstant(value != 0);
+	}
+	m_clickedSquare = nullptr;
+
+	for(auto& square: m_sudokuSquares){
+		square->update(SudokuSquare::IDLE);
+	}
+}
+void SudokuWindow::onSolveButtonClicked(){
+	m_generator->solve();
+	auto board = m_generator->getBoard();
+	for (int i = 0; i < 81; ++i) {
+		int value = board[i / 9][i % 9];
+		m_sudokuSquares[i]->setValue(value);
+		m_sudokuSquares[i]->setValueConstant(value != 0);
+	}
+	if (m_clickedSquare)
+		update(m_clickedSquare->getRow(), m_clickedSquare->getCol(), m_clickedSquare->getValue());
+}
+void SudokuWindow::onHintButtonClicked(){
+	if (m_clickedSquare != nullptr) {
+		int row = m_clickedSquare->getRow(), col = m_clickedSquare->getCol();
+		m_generator->solveAt(row, col);
+		int valueAt = m_generator->getBoard()[row][col];
+		m_sudokuSquares[row * 9 + col]->setValue(valueAt);
+		m_sudokuSquares[row * 9 + col]->setValueConstant(true);
+		update(m_clickedSquare->getRow(), m_clickedSquare->getCol(), m_clickedSquare->getValue());
+	}
+}
+
 void SudokuWindow::update(int rowClicked, int colClicked, int valueClicked) {
 	if (rowClicked == -1 || colClicked == -1)
 		return;
@@ -179,8 +197,8 @@ void SudokuWindow::update(int rowClicked, int colClicked, int valueClicked) {
 }
 
 void SudokuWindow::createButtons(){
-	sf::Font font;
-	if(!font.loadFromFile("./Fonts/calibri.ttf")){
+	sf::Font *font = new sf::Font();
+	if(!font->loadFromFile("./Fonts/calibri.ttf")){
 		std::cerr << "Couldn't open a file with font. Exiting.\n";
 		getchar();
 		exit(1);
@@ -188,14 +206,14 @@ void SudokuWindow::createButtons(){
 	// Create and fill sudoku squares
 	auto board = m_generator->getBoard();
 	for (int i = 0; i < 81; ++i) {
-		m_sudokuSquares[i] = new SudokuSquare(i / 9, i % 9, (i % 9) * 50.0f, (i / 9) * 50.0f, 50, 50, font, "");
+		m_sudokuSquares[i] = new SudokuSquare(i / 9, i % 9, (i % 9) * 50.0f, (i / 9) * 50.0f, 50, 50, *font, "");
 		int value = board[i / 9][i % 9];
 		m_sudokuSquares[i]->setValue(value);
 		m_sudokuSquares[i]->setValueConstant(value != 0);
 	}
 
 	// Create and assign functions to menu buttons
-	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 0, 125, 40, font, "New Game", MenuButton::NEW_GAME));
-	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 1, 125, 40, font, "Solve", MenuButton::SOLVE_GAME));
-	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 2, 125, 40, font, "Hint", MenuButton::HINT));
+	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 0, 125, 40, *font, "New Game", MenuButton::NEW_GAME));
+	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 1, 125, 40, *font, "Solve", MenuButton::SOLVE_GAME));
+	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 2, 125, 40, *font, "Hint", MenuButton::HINT));
 }
