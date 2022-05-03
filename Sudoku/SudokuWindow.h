@@ -16,6 +16,7 @@ private:
 	void onNewGameButtonClicked();
 	void onSolveButtonClicked();
 	void onHintButtonClicked();
+	void updateClock();
 	
 	void update(int rowClicked, int colClicked, int valueClicked);
 	
@@ -24,5 +25,9 @@ private:
 	std::vector<MenuButton*> m_menuButtons;
 	SudokuSquare* m_clickedSquare;
 	bool m_gameFinished;
+	sf::Font m_font;
+	sf::Text m_clockText;
+	sf::Text m_difficultyText;
+	sf::Clock *m_clock;
 };
 
