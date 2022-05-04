@@ -42,7 +42,7 @@ void SudokuGenerator::solveAt(int row, int col){
 }
 
 bool SudokuGenerator::removeNumbersFromBoard(const std::vector<int>& removeOrder, int index){
-	if(m_missingValues >= 1) return true;
+	if(m_missingValues >= 45) return true;
 	for(int i = index; i < removeOrder.size(); ++i){
 		int row = (removeOrder[i] - 1) / 9, col = (removeOrder[i] - 1) % 9;
 		int valueSaved = m_board[row][col];

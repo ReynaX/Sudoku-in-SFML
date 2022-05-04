@@ -16,7 +16,7 @@ SudokuWindow::SudokuWindow(){
 	m_clockText.setCharacterSize(24);
 
 	m_clockText.setPosition(
-		450 - m_clockText.getGlobalBounds().width, 0
+		WindowConfig::height - m_clockText.getString().getSize() / 2.f * m_clockText.getCharacterSize(), 0
 	);
 
 	m_difficultyText.setFont(m_font);
@@ -27,20 +27,24 @@ SudokuWindow::SudokuWindow(){
 	m_difficultyText.setPosition(
 		0, 0
 	);
+	m_animationFinished = false;
+	m_animationStage = 0;
+	
 	createButtons();
 	eventHandler();
 }
 
 void SudokuWindow::eventHandler(){
+	uint32_t cSize = m_difficultyText.getCharacterSize() + m_difficultyText.getCharacterSize() / 2;
 	Line vertices[] = {
-	Line(sf::Vector2f(150, 0 + m_difficultyText.getGlobalBounds().height), sf::Vector2f(150, 450 + m_difficultyText.getGlobalBounds().height)),
-	Line(sf::Vector2f(300, 0 + m_difficultyText.getGlobalBounds().height), sf::Vector2f(300, 450 + m_difficultyText.getGlobalBounds().height)),
-	Line(sf::Vector2f(0, 150 + m_difficultyText.getGlobalBounds().height), sf::Vector2f(450, 150 + m_difficultyText.getGlobalBounds().height)),
-	Line(sf::Vector2f(0, 300 + m_difficultyText.getGlobalBounds().height), sf::Vector2f(450, 300 + m_difficultyText.getGlobalBounds().height))
+	Line(sf::Vector2f(WindowConfig::height / 3.f, 0 + cSize), sf::Vector2f(WindowConfig::height / 3.f, WindowConfig::height + cSize)),
+	Line(sf::Vector2f(WindowConfig::height * 2.f / 3.f, 0 + cSize), sf::Vector2f(WindowConfig::height * 2.f / 3.f, WindowConfig::height + cSize)),
+	Line(sf::Vector2f(0, WindowConfig::height / 3.f + cSize), sf::Vector2f(WindowConfig::height, WindowConfig::height / 3.f + cSize)),
+	Line(sf::Vector2f(0, WindowConfig::height * 2.f / 3.f + cSize), sf::Vector2f(WindowConfig::height, WindowConfig::height * 2.f / 3.f + cSize))
 	};
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8.0;
-	sf::RenderWindow window(sf::VideoMode(625 , 450 + m_clockText.getGlobalBounds().height), "Sudoku v1.0", sf::Style::Close, settings);
+	sf::RenderWindow window(sf::VideoMode(WindowConfig::width , WindowConfig::height + cSize), "Sudoku v1.0", sf::Style::Close, settings);
 	while (window.isOpen()) {
 		sf::Event event;
 		while (window.pollEvent(event)) {
@@ -65,13 +69,16 @@ void SudokuWindow::eventHandler(){
 			if (event.type == sf::Event::TextEntered)
 				onKeyButtonClicked(event.text);
 		}
+		if (m_gameFinished && !m_animationFinished) {
+			onAnimationStageChanged();
+		}
 		window.clear(sf::Color(255, 255, 255, 1));
-			for (int i = 0; i < 81; ++i) {
-				m_sudokuSquares[i]->draw(&window, sf::RenderStates::Default);
-			}
+		for (int i = 0; i < 81; ++i) {
+			m_sudokuSquares[i]->draw(&window, sf::RenderStates::Default);
+		}
 
-			for (auto &v : vertices)
-				window.draw(v);
+		for (auto &v : vertices)
+			window.draw(v);
 		for (auto &button : m_menuButtons)
 			button->draw(&window);
 		updateClock();
@@ -128,6 +135,7 @@ void SudokuWindow::onMouseMoved(const sf::Vector2f& mousePosition){
 void SudokuWindow::onKeyButtonClicked(sf::Event::TextEvent text){
 	if (m_gameFinished)
 		return;
+	
 	if (m_clickedSquare == nullptr)
 		return;
 
@@ -143,7 +151,7 @@ void SudokuWindow::onKeyButtonClicked(sf::Event::TextEvent text){
 }
 
 void SudokuWindow::onBackspaceButtonClicked(){
-	if(m_clickedSquare != nullptr){
+	if(m_clickedSquare != nullptr && !m_gameFinished){
 		if(!m_clickedSquare->getValueConstant()){
 			m_clickedSquare->setValue(0);
 			m_generator->setValueAt(m_clickedSquare->getRow(), m_clickedSquare->getCol(), 0);
@@ -166,6 +174,7 @@ void SudokuWindow::onNewGameButtonClicked(){
 	for(auto& square: m_sudokuSquares){
 		square->update(SudokuSquare::IDLE);
 	}
+	m_gameFinished = false;
 }
 
 void SudokuWindow::onSolveButtonClicked(){
@@ -203,9 +212,6 @@ void SudokuWindow::updateClock(){
 }
 
 void SudokuWindow::update(int rowClicked, int colClicked, int valueClicked) {
-	if (m_gameFinished)
-		return;
-	
 	if (rowClicked == -1 || colClicked == -1)
 		return;
 	
@@ -230,7 +236,43 @@ void SudokuWindow::update(int rowClicked, int colClicked, int valueClicked) {
 	}
 	if(m_generator->isGameFinished()){
 		m_gameFinished = true;
+		m_animationFinished = false;
 		std::cout << "Game finished\n";
+	}
+}
+
+void SudokuWindow::onAnimationStageChanged(){
+	if (m_animationStage == 0) {
+		++m_animationStage;
+		m_sudokuSquares[4 * 9 + 9]->update(SudokuSquare::CLICKED);
+		m_clock->restart();
+		return;
+	}
+	if (m_animationStage > 4 && m_clock->getElapsedTime().asSeconds() >= 0.5f) {
+		m_animationFinished = true;
+		int offset = m_animationStage - 1;
+		updateAnimation(offset, SudokuSquare::IDLE);
+		return;
+	}
+	if(m_clock->getElapsedTime().asSeconds() >= 0.5f){
+		int offset = m_animationStage - 1;
+		updateAnimation(offset, SudokuSquare::IDLE);
+
+		offset = m_animationStage;
+		updateAnimation(offset, SudokuSquare::CLICKED);
+		m_clock->restart();
+		++m_animationStage;
+	}
+}
+
+void SudokuWindow::updateAnimation(int offset, SudokuSquare::SquareState state){
+	int centerX = 4, centerY = 4;
+	for (int i = -offset; i <= offset && offset != 0; i += offset * 2) {
+		for (int j = centerX - abs(offset); j <= abs(offset) + centerX; ++j)
+			m_sudokuSquares[(centerY + i) * 9 + j]->update(state);
+
+		for (int j = centerY - abs(offset); j <= abs(offset) + centerY; ++j)
+			m_sudokuSquares[j * 9 + (centerX + i)]->update(state);
 	}
 }
 
@@ -242,17 +284,18 @@ void SudokuWindow::createButtons(){
 	}
 	// Create and fill sudoku squares
 	auto board = m_generator->getBoard();
+	uint32_t cSize = m_difficultyText.getCharacterSize() + m_difficultyText.getCharacterSize() / 2;
 	for (int i = 0; i < 81; ++i) {
-		float f = m_difficultyText.getGlobalBounds().height;
 		//std::cout << f << '\n';
-		m_sudokuSquares[i] = new SudokuSquare(i / 9, i % 9, (i % 9) * 50.0f , (i / 9) * 50.0f + f + f / 3.f, 50, 50, m_font, "");
+		m_sudokuSquares[i] = new SudokuSquare(i / 9, i % 9, (i % 9) * (WindowConfig::height / 9.f) , i / 9 * (WindowConfig::height / 9.f) + cSize,
+			(WindowConfig::height / 9.f), (WindowConfig::height / 9.f), m_font, "");
 		int value = board[i / 9][i % 9];
 		m_sudokuSquares[i]->setValue(value);
 		m_sudokuSquares[i]->setValueConstant(value != 0);
 	}
 
 	// Create and assign functions to menu buttons
-	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 0, 125, 40, m_font, "New Game", MenuButton::NEW_GAME));
-	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 1, 125, 40, m_font, "Solve", MenuButton::SOLVE_GAME));
-	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 2, 125, 40, m_font, "Hint", MenuButton::HINT));
+	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 0 + cSize, 125, 40, m_font, "New Game", MenuButton::NEW_GAME));
+	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 1 + cSize, 125, 40, m_font, "Solve", MenuButton::SOLVE_GAME));
+	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 2 + cSize, 125, 40, m_font, "Hint", MenuButton::HINT));
 }
