@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DifficultyLevelButton.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="MenuButton.cpp" />
     <ClCompile Include="SudokuGenerator.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="SudokuWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DifficultyLevelButton.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="MenuButton.h" />
     <ClInclude Include="SudokuGenerator.h" />

@@ -34,7 +34,7 @@ MenuButton::ButtonFunction MenuButton::getFunction(){
 }
 
 void MenuButton::draw(sf::RenderTarget* target, sf::RenderStates states) const{
-	target->draw(*this);
+	target->draw(*this, states);
 	target->draw(m_text);
 }
 

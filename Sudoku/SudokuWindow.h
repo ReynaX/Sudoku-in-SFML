@@ -1,7 +1,8 @@
 #pragma once
-#include "MenuButton.h"
-#include "SudokuGenerator.h"
 #include "SudokuSquare.h"
+class SudokuGenerator;
+class DifficultyLevelButton;
+class MenuButton;
 /**
  * Dimensions for the main window
  * Size of sudoku board is height x height
@@ -41,16 +42,19 @@ private:
 	 /// Makes a pseudo animation by changing states of squares in the right intervals.
 	void onAnimationStageChanged();
 	
-	void updateAnimation(int offset, SudokuSquare::SquareState state);
+	void updateAnimation(int offset, enum SudokuSquare::SquareState state);
 	
 	SudokuGenerator *m_generator;
 	std::vector<SudokuSquare*> m_sudokuSquares; /// Vector with squares
 	std::vector<MenuButton*> m_menuButtons; /// Vector with menu button(new game button, hint button, solution button)
+	std::vector<DifficultyLevelButton*> m_difficultybuttons;
 	SudokuSquare* m_clickedSquare; /// Currently clicked square
 	
 	bool m_gameFinished; /// Informs whether sudoku has been solved
 	bool m_animationFinished; /// Informs whether animation has finished
 	int m_animationStage; 
+	int m_difficultySelected;
+
 	
 	sf::Font m_font;
 	sf::Text m_clockText;

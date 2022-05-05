@@ -1,7 +1,11 @@
 #include "SudokuWindow.h"
 
 #include <iostream>
+
+#include "DifficultyLevelButton.h"
 #include "Line.h"
+#include "MenuButton.h"
+#include "SudokuGenerator.h"
 
 SudokuWindow::SudokuWindow(){
 	m_generator = new SudokuGenerator();
@@ -81,6 +85,8 @@ void SudokuWindow::eventHandler(){
 			window.draw(v);
 		for (auto &button : m_menuButtons)
 			button->draw(&window);
+		for (auto &button : m_difficultybuttons)
+			button->draw(&window);
 		updateClock();
 		window.draw(m_clockText);
 		window.draw(m_difficultyText);
@@ -119,8 +125,23 @@ void SudokuWindow::onMouseButtonClicked(const sf::Vector2f& mousePosition) {
 					break;
 				}
 			}
+			return;
+		}
+	}
+	int buttonChecked = -1;
+	for (int i = 0; i < m_difficultybuttons.size(); ++i) {
+		if(m_difficultybuttons[i]->getGlobalBounds().contains(mousePosition)){
+			buttonChecked = i;
+			m_difficultySelected = buttonChecked;
 			break;
 		}
+	}
+
+	if (buttonChecked == -1)
+		return;
+	
+	for(int i = 0; i < m_difficultybuttons.size(); ++i){
+		m_difficultybuttons[i]->update(buttonChecked == i);
 	}
 }
 
@@ -189,6 +210,7 @@ void SudokuWindow::onSolveButtonClicked(){
 		update(m_clickedSquare->getRow(), m_clickedSquare->getCol(), m_clickedSquare->getValue());
 	m_gameFinished = true;
 }
+
 void SudokuWindow::onHintButtonClicked(){
 	if (m_clickedSquare != nullptr) {
 		int row = m_clickedSquare->getRow(), col = m_clickedSquare->getCol();
@@ -298,4 +320,23 @@ void SudokuWindow::createButtons(){
 	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 0 + cSize, 125, 40, m_font, "New Game", MenuButton::NEW_GAME));
 	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 1 + cSize, 125, 40, m_font, "Solve", MenuButton::SOLVE_GAME));
 	m_menuButtons.push_back(new MenuButton(475, 25 + 40 * 2 + cSize, 125, 40, m_font, "Hint", MenuButton::HINT));
+
+
+	// Create difficulty level buttons
+	std::vector<sf::Texture> textures(3);
+	std::string level[] = { "easy", "medium", "hard" };
+	sf::Color colors[] = { sf::Color::Green, sf::Color::Yellow, sf::Color::Red };
+	int radius = 16;
+	
+	for(int i = 0; i < 3; ++i){
+		if(!textures[i].loadFromFile("Resources/" + level[i] + "_level_icon.png")){
+			std::cerr << "Can't read texture from file: " + level[i] + "_level_icon" << '\n';
+			getchar();
+			exit(1);
+		}
+		m_difficultybuttons.emplace_back(new DifficultyLevelButton(450 + radius * 2 * i + 20 *(i + 1), 185, radius, colors[i], m_font, textures[i], i));
+	}
+
+	m_difficultybuttons[1]->update(true);
+	m_difficultySelected = 1;
 }

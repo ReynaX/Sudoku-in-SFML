@@ -33,7 +33,7 @@ SudokuSquare::SudokuSquare(int rowOnBoard, int colOnBoard, float x, float y, flo
 }
 
 void SudokuSquare::draw(sf::RenderTarget *target, sf::RenderStates states) const{
-	target->draw(*this);
+	target->draw(*this, states);
 	target->draw(m_text);
 }
 
