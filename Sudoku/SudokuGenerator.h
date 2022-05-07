@@ -4,7 +4,7 @@
 //TODO: Implement difficulty level
 class SudokuGenerator{
 public:
-	SudokuGenerator();
+	SudokuGenerator(int difficultyLevel);
 	
 	std::vector<std::vector<int>> getBoard();
 	bool isGameFinished();
@@ -54,10 +54,11 @@ private:
 	 */
 	std::vector<int> generateRandomPermutation(int vectorSize);
 
-	std::vector<std::vector<int>> m_board; /// Matrix that contains current sudoku board
-	std::vector<std::vector<int>> m_solvedBoard; /// Matrix that contains solved sudoku board
+	std::vector<std::vector<int>> m_board; // Matrix that contains current sudoku board
+	std::vector<std::vector<int>> m_solvedBoard; // Matrix that contains solved sudoku board
 	
-	int m_missingValues; /// Number of empty squares to generate in sudoku board
+	int m_missingValues; // Number of empty squares to generate in sudoku board
+	int m_emptySquares;
 
 	std::random_device m_rd;
 	std::mt19937 m_mt{m_rd()};

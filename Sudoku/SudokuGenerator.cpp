@@ -2,11 +2,12 @@
 #include <algorithm>
 #include <iostream>
 
-SudokuGenerator::SudokuGenerator(){
+SudokuGenerator::SudokuGenerator(int difficultyLevel){
 	m_board.resize(9, std::vector<int>(9));
 	solveSudoku(0, 0, 0);
 	m_solvedBoard = m_board;
 	m_missingValues = 0;
+	m_emptySquares = (35 + difficultyLevel * 10);
 	auto vec = generateRandomPermutation(81);
 	removeNumbersFromBoard(vec, 0);
 
@@ -42,7 +43,7 @@ void SudokuGenerator::solveAt(int row, int col){
 }
 
 bool SudokuGenerator::removeNumbersFromBoard(const std::vector<int>& removeOrder, int index){
-	if(m_missingValues >= 45) return true;
+	if(m_missingValues >= m_emptySquares) return true;
 	for(int i = index; i < removeOrder.size(); ++i){
 		int row = (removeOrder[i] - 1) / 9, col = (removeOrder[i] - 1) % 9;
 		int valueSaved = m_board[row][col];

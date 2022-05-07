@@ -2,11 +2,10 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-DifficultyLevelButton::DifficultyLevelButton(float x, float y, float radius, sf::Color backgroundColor, const sf::Font& font, const sf::Texture& texture, int difficultyLevel){
+DifficultyLevelButton::DifficultyLevelButton(float x, float y, float radius, const sf::Font& font, sf::Texture* texture, int difficultyLevel){
 	m_isChecked = false;
 	m_texture = texture;
 	m_font = font;
-	m_color = backgroundColor;
 	m_difficultyLevel = static_cast<DifficultyLevel>(difficultyLevel);
 	switch(difficultyLevel){
 	case 0: m_text.setString("Easy"); break;
@@ -23,8 +22,12 @@ DifficultyLevelButton::DifficultyLevelButton(float x, float y, float radius, sf:
 	m_text.setFillColor(sf::Color::Black);
 	setPosition(x, y);
 	setRadius(radius);
-	setFillColor(backgroundColor);
-	setTexture(&m_texture);
+	setFillColor(sf::Color(211, 211, 211, 125));
+	setTexture(m_texture);
+}
+
+DifficultyLevelButton::~DifficultyLevelButton(){
+	delete m_texture; 
 }
 
 void DifficultyLevelButton::draw(sf::RenderTarget* target, sf::RenderStates states) const{
@@ -36,7 +39,7 @@ void DifficultyLevelButton::update(bool isChecked){
 	if(isChecked){
 		setFillColor(sf::Color(211, 211, 211));
 	}else{
-		setFillColor(sf::Color(m_color));
+		setFillColor(sf::Color(211, 211, 211, 125));
 	}
 }
 

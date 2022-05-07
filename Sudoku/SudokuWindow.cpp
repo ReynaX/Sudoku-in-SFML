@@ -8,7 +8,7 @@
 #include "SudokuGenerator.h"
 
 SudokuWindow::SudokuWindow(){
-	m_generator = new SudokuGenerator();
+	m_generator = new SudokuGenerator(1);
 	m_sudokuSquares.resize(81);
 	m_clickedSquare = nullptr;
 	m_gameFinished = false;
@@ -24,7 +24,6 @@ SudokuWindow::SudokuWindow(){
 	);
 
 	m_difficultyText.setFont(m_font);
-	m_difficultyText.setString("Difficulty: Easy");
 	m_difficultyText.setFillColor(sf::Color::Black);
 	m_difficultyText.setCharacterSize(24);
 
@@ -33,9 +32,20 @@ SudokuWindow::SudokuWindow(){
 	);
 	m_animationFinished = false;
 	m_animationStage = 0;
-	
 	createButtons();
 	eventHandler();
+}
+
+SudokuWindow::~SudokuWindow(){
+	for (auto &button : m_menuButtons)
+		delete button;
+	for (auto &button : m_sudokuSquares)
+		delete button;
+	for (auto &button : m_difficultybuttons)
+		delete button;
+
+	delete m_generator;
+	delete m_clock;
 }
 
 void SudokuWindow::eventHandler(){
@@ -182,7 +192,7 @@ void SudokuWindow::onBackspaceButtonClicked(){
 }
 
 void SudokuWindow::onNewGameButtonClicked(){
-	m_generator = new SudokuGenerator();
+	m_generator = new SudokuGenerator(m_difficultySelected);
 	// Reassign values of sudoku squares
 	auto board = m_generator->getBoard();
 	for (int i = 0; i < 81; ++i) {
@@ -196,6 +206,11 @@ void SudokuWindow::onNewGameButtonClicked(){
 		square->update(SudokuSquare::IDLE);
 	}
 	m_gameFinished = false;
+	m_animationStage = 0;
+	m_animationFinished = false;
+	m_clock->restart();
+	std::string difficultyLevelText = (m_difficultySelected == 0 ? "Easy" : (m_difficultySelected == 1 ? "Medium" : "Hard"));
+	m_difficultyText.setString("Difficulty: " + difficultyLevelText);
 }
 
 void SudokuWindow::onSolveButtonClicked(){
@@ -235,6 +250,9 @@ void SudokuWindow::updateClock(){
 
 void SudokuWindow::update(int rowClicked, int colClicked, int valueClicked) {
 	if (rowClicked == -1 || colClicked == -1)
+		return;
+
+	if (m_gameFinished && !m_animationFinished)
 		return;
 	
 	int gridY = rowClicked - rowClicked % 3, gridX = colClicked - colClicked % 3;
@@ -323,20 +341,22 @@ void SudokuWindow::createButtons(){
 
 
 	// Create difficulty level buttons
-	std::vector<sf::Texture> textures(3);
+	std::vector<sf::Texture*> textures(3);
 	std::string level[] = { "easy", "medium", "hard" };
-	sf::Color colors[] = { sf::Color::Green, sf::Color::Yellow, sf::Color::Red };
-	int radius = 16;
+	float radius = 16;
 	
 	for(int i = 0; i < 3; ++i){
-		if(!textures[i].loadFromFile("Resources/" + level[i] + "_level_icon.png")){
+		textures[i] = new sf::Texture();
+		if(!textures[i]->loadFromFile("Resources/" + level[i] + "_level_icon.png")){
 			std::cerr << "Can't read texture from file: " + level[i] + "_level_icon" << '\n';
 			getchar();
 			exit(1);
 		}
-		m_difficultybuttons.emplace_back(new DifficultyLevelButton(450 + radius * 2 * i + 20 *(i + 1), 185, radius, colors[i], m_font, textures[i], i));
+		m_difficultybuttons.emplace_back(new DifficultyLevelButton(450 + radius * 2 * i + 20 *(i + 1), 185, radius, m_font, textures[i], i));
 	}
 
+	// Set default difficulty level to medium
 	m_difficultybuttons[1]->update(true);
 	m_difficultySelected = 1;
+	m_difficultyText.setString("Difficulty: Medium");
 }

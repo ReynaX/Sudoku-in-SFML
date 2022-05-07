@@ -16,6 +16,7 @@ namespace WindowConfig {
 class SudokuWindow{
 public:
 	SudokuWindow();
+	~SudokuWindow();
 	/// Handles events(mouse, keyboard events)
 	void eventHandler();
 private:
@@ -45,20 +46,19 @@ private:
 	void updateAnimation(int offset, enum SudokuSquare::SquareState state);
 	
 	SudokuGenerator *m_generator;
-	std::vector<SudokuSquare*> m_sudokuSquares; /// Vector with squares
-	std::vector<MenuButton*> m_menuButtons; /// Vector with menu button(new game button, hint button, solution button)
-	std::vector<DifficultyLevelButton*> m_difficultybuttons;
-	SudokuSquare* m_clickedSquare; /// Currently clicked square
+	std::vector<SudokuSquare*> m_sudokuSquares; // Vector with squares
+	std::vector<MenuButton*> m_menuButtons; // Vector with menu button(new game button, hint button, solution button)
+	std::vector<DifficultyLevelButton*> m_difficultybuttons; // Vector with buttons to choose level difficulty
+	SudokuSquare* m_clickedSquare; // Currently clicked square
 	
-	bool m_gameFinished; /// Informs whether sudoku has been solved
-	bool m_animationFinished; /// Informs whether animation has finished
-	int m_animationStage; 
-	int m_difficultySelected;
+	bool m_gameFinished; // Informs whether sudoku has been solved
+	bool m_animationFinished; // Informs whether animation has finished
+	int m_animationStage; // Indicates current phase of ending animation
+	int m_difficultySelected; // difficulty selected
 
-	
 	sf::Font m_font;
 	sf::Text m_clockText;
 	sf::Text m_difficultyText;
-	sf::Clock *m_clock; /// Clock of the game
+	sf::Clock *m_clock; // Clock of the game
 };
 

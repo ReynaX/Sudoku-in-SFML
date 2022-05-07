@@ -37,8 +37,8 @@ public:
 	/// Changes state of this object
 	void update(SquareState newState);
 private:
-	int m_row, m_col; /// Position on the board
-	sf::Text m_text; /// Text that contains the numeric value of square
+	int m_row, m_col; // Position on the board
+	sf::Text m_text; // Text that contains the numeric value of square
 	sf::Font m_font;
 	
 	sf::Color m_idleColor;
@@ -47,7 +47,7 @@ private:
 	sf::Color m_incorrectColor;
 	sf::Color m_activeColor;
 	
-	SquareState m_state; /// Current state of a square
-	int m_value; /// Numeric value of number within this square or 0 if there is no number
-	bool m_isValueConstant; /// True if value within this square can be modified
+	SquareState m_state; // Current state of a square
+	int m_value; // Numeric value of number within this square or 0 if there is no number
+	bool m_isValueConstant; // True if value within this square can be modified
 };
