@@ -7,7 +7,7 @@ class DifficultyLevelButton final : public sf::CircleShape
 	enum class DifficultyLevel { EASY = 0, MEDIUM, HARD };
 public:
 	DifficultyLevelButton(float x, float y, float radius, const sf::Font& font, sf::Texture *texture, int difficultyLevel);
-	~DifficultyLevelButton();
+	~DifficultyLevelButton() override;
 	
 	void draw(sf::RenderTarget* target, sf::RenderStates states = sf::RenderStates::Default) const;
 	void update(bool isChecked);

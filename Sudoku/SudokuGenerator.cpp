@@ -36,8 +36,7 @@ void SudokuGenerator::solve(){
 }
 
 void SudokuGenerator::solveAt(int row, int col){
-	if (row <= 0 || row >= 9 || col <= 0 || col >= 9)
-		return;
+	if(row <= 0 || row >= 9 || col <= 0 || col >= 9) return;
 	int valueAt = m_solvedBoard[row][col];
 	m_board[row][col] = valueAt;
 }

@@ -14,8 +14,7 @@ Line::Line(const sf::Vector2f& point1, const sf::Vector2f& point2) :
 	m_vertices[2].position = point2 - offset;
 	m_vertices[3].position = point1 - offset;
 
-	for(int i = 0; i < 4; ++i)
-		m_vertices[i].color = m_color;
+	for(auto& m_vertice: m_vertices) m_vertice.color = m_color;
 }
 
 

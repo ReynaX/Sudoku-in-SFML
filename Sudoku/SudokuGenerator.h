@@ -1,7 +1,7 @@
 #pragma once
 #include <random>
 #include <vector>
-//TODO: Implement difficulty level
+
 class SudokuGenerator{
 public:
 	SudokuGenerator(int difficultyLevel);

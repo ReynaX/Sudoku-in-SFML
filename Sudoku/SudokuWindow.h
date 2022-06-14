@@ -54,7 +54,10 @@ private:
 	bool m_gameFinished; // Informs whether sudoku has been solved
 	bool m_animationFinished; // Informs whether animation has finished
 	int m_animationStage; // Indicates current phase of ending animation
-	int m_difficultySelected; // difficulty selected
+
+	enum Difficulty{EASY = 0, MEDIUM, HARD};
+	
+	Difficulty m_difficultySelected; // difficulty selected
 
 	sf::Font m_font;
 	sf::Text m_clockText;

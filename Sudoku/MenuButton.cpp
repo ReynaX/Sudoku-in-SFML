@@ -1,6 +1,5 @@
 #include "MenuButton.h"
 
-#include <iostream>
 #include <SFML/Graphics/RenderTarget.hpp>
 
 

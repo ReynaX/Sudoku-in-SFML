@@ -30,6 +30,9 @@ SudokuWindow::SudokuWindow(){
 	m_difficultyText.setPosition(
 		0, 0
 	);
+
+	m_difficultySelected = MEDIUM;
+	
 	m_animationFinished = false;
 	m_animationStage = 0;
 	createButtons();
@@ -142,7 +145,7 @@ void SudokuWindow::onMouseButtonClicked(const sf::Vector2f& mousePosition) {
 	for (int i = 0; i < m_difficultybuttons.size(); ++i) {
 		if(m_difficultybuttons[i]->getGlobalBounds().contains(mousePosition)){
 			buttonChecked = i;
-			m_difficultySelected = buttonChecked;
+			m_difficultySelected = static_cast<Difficulty>(buttonChecked);
 			break;
 		}
 	}
@@ -306,8 +309,8 @@ void SudokuWindow::onAnimationStageChanged(){
 }
 
 void SudokuWindow::updateAnimation(int offset, SudokuSquare::SquareState state){
-	int centerX = 4, centerY = 4;
 	for (int i = -offset; i <= offset && offset != 0; i += offset * 2) {
+		int centerX = 4, centerY = 4;
 		for (int j = centerX - abs(offset); j <= abs(offset) + centerX; ++j)
 			m_sudokuSquares[(centerY + i) * 9 + j]->update(state);
 
@@ -357,6 +360,6 @@ void SudokuWindow::createButtons(){
 
 	// Set default difficulty level to medium
 	m_difficultybuttons[1]->update(true);
-	m_difficultySelected = 1;
+	m_difficultySelected = MEDIUM;
 	m_difficultyText.setString("Difficulty: Medium");
 }
