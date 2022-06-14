@@ -20,7 +20,7 @@ SudokuWindow::SudokuWindow(){
 	m_clockText.setCharacterSize(24);
 
 	m_clockText.setPosition(
-		WindowConfig::height - m_clockText.getString().getSize() / 2.f * m_clockText.getCharacterSize(), 0
+		WindowConfig::height - static_cast<float>(m_clockText.getString().getSize()) / 2.f * m_clockText.getCharacterSize(), 0
 	);
 
 	m_difficultyText.setFont(m_font);
@@ -60,7 +60,7 @@ void SudokuWindow::eventHandler(){
 	Line(sf::Vector2f(0, WindowConfig::height * 2.f / 3.f + cSize), sf::Vector2f(WindowConfig::height, WindowConfig::height * 2.f / 3.f + cSize))
 	};
 	sf::ContextSettings settings;
-	settings.antialiasingLevel = 8.0;
+	settings.antialiasingLevel = 8;
 	sf::RenderWindow window(sf::VideoMode(WindowConfig::width , WindowConfig::height + cSize), "Sudoku v1.0", sf::Style::Close, settings);
 	while (window.isOpen()) {
 		sf::Event event;
@@ -142,7 +142,7 @@ void SudokuWindow::onMouseButtonClicked(const sf::Vector2f& mousePosition) {
 		}
 	}
 	int buttonChecked = -1;
-	for (int i = 0; i < m_difficultybuttons.size(); ++i) {
+	for (size_t i = 0; i < m_difficultybuttons.size(); ++i) {
 		if(m_difficultybuttons[i]->getGlobalBounds().contains(mousePosition)){
 			buttonChecked = i;
 			m_difficultySelected = static_cast<Difficulty>(buttonChecked);
@@ -153,7 +153,7 @@ void SudokuWindow::onMouseButtonClicked(const sf::Vector2f& mousePosition) {
 	if (buttonChecked == -1)
 		return;
 	
-	for(int i = 0; i < m_difficultybuttons.size(); ++i){
+	for(size_t i = 0; i < m_difficultybuttons.size(); ++i){
 		m_difficultybuttons[i]->update(buttonChecked == i);
 	}
 }
@@ -329,8 +329,7 @@ void SudokuWindow::createButtons(){
 	auto board = m_generator->getBoard();
 	uint32_t cSize = m_difficultyText.getCharacterSize() + m_difficultyText.getCharacterSize() / 2;
 	for (int i = 0; i < 81; ++i) {
-		//std::cout << f << '\n';
-		m_sudokuSquares[i] = new SudokuSquare(i / 9, i % 9, (i % 9) * (WindowConfig::height / 9.f) , i / 9 * (WindowConfig::height / 9.f) + cSize,
+		m_sudokuSquares[i] = new SudokuSquare(i / 9, i % 9, i % 9 * (WindowConfig::height / 9.f), i / 9 * (WindowConfig::height / 9.f) + static_cast<float>(cSize),
 			(WindowConfig::height / 9.f), (WindowConfig::height / 9.f), m_font, "");
 		int value = board[i / 9][i % 9];
 		m_sudokuSquares[i]->setValue(value);
@@ -346,9 +345,9 @@ void SudokuWindow::createButtons(){
 	// Create difficulty level buttons
 	std::vector<sf::Texture*> textures(3);
 	std::string level[] = { "easy", "medium", "hard" };
-	float radius = 16;
 	
 	for(int i = 0; i < 3; ++i){
+		float radius = 16;
 		textures[i] = new sf::Texture();
 		if(!textures[i]->loadFromFile("Resources/" + level[i] + "_level_icon.png")){
 			std::cerr << "Can't read texture from file: " + level[i] + "_level_icon" << '\n';
